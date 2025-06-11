@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 10/6/2025 . Author @Vikensa Grabocka
+ */
+
+
 package commitOwners;
 
 import java.util.HashMap;
@@ -13,13 +18,26 @@ public class CommitOwnersProcessing {
         this.weld = weld;
     }
 
+
+    /**
+     * Method that is used to construct the map that creates
+     * the corresponding pairs employee id - employee full name
+     * @param line
+     */
     public void createDictionary(String line){
         String[] parts = line.split(",");
         long id = Long.parseLong(parts[0]);
-        String name = parts[1];
-        String surname = parts[2];
+        String surname = parts[1];
+        String name = parts[2];
         employees.put(id,name + " " + surname);
     }
+
+
+    /**
+     * Method used to find the configuration with the most commits
+     * from the given weld value
+     * @return a list that contains the names of the employees
+     */
 
     public List<String> findCommitOwners(){
        List<String> commitOwners = new LinkedList<>();
@@ -45,6 +63,12 @@ public class CommitOwnersProcessing {
     return commitOwners;
     }
 
+
+    /**
+     * Method used to calculate the number of different configurations
+     * the weld can be interpreted
+     * @return
+     */
     public long calculateNumOfDecompositions(){
         long[] numDecompositions = new long[weld.length()+1];
         numDecompositions[0] = 1;

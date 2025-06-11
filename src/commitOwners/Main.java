@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 10/6/2025 . Author @Vikensa Grabocka
+ */
+
 package commitOwners;
 
 import java.io.BufferedReader;

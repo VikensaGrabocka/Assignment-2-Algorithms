@@ -1,11 +1,14 @@
+/*
+ * Copyright (c) 10/6/2025 . Author @Vikensa Grabocka
+ */
+
+
 package entropy;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-/*
- * Copyright (c) 7/6/2025 . Author @Vikensa Grabocka
- */
+
 
 public class LanguageModel {
    private final int nGram;
@@ -30,11 +33,7 @@ public class LanguageModel {
 
     private String normalizeText(String line){
         String lowerCase = line.toLowerCase();
-//        return lowerCase.replaceAll("[!\"#$%&'()*+,-./:;<=>?@\\[\\]^_`{|}~0-9]","");
-//        return lowerCase.replaceAll("[^\\p{L} ]+", ""). replaceAll("\\s+", " ").trim();
-        String normalized = lowerCase.replaceAll("[^a-zA-ZëçËÇ ]+", "")
-                .replaceAll("\\s+", " ")
-                .trim();
+        String normalized = lowerCase.replaceAll("[^\\p{L} ]+", ""). replaceAll("\\s+", " ").trim();
         return normalized.isEmpty() ? null : normalized;
     }
 
@@ -46,21 +45,15 @@ public class LanguageModel {
      */
     public void calculateTokenFrequency(String line){
        String normalizedLine = normalizeText(line);
-//       String[] words = normalizedLine.trim().split("\\s+");
         if(normalizedLine == null || normalizedLine.isEmpty()){
             return;
         }
        String[] words = normalizedLine.trim().split(" ");
        for(String word : words){
-           //here we check if the string has more letters than n of the n-gram
            if(word.length()>=nGram){
                String token;
                for(int i=0; i<word.length()-nGram + 1; i++){
                    token = word.substring(i, i+nGram);
-                   if (!token.matches("^[a-zA-ZëçËÇ]+$")) {  // ^ and $ ensure full-string match
-                       continue;
-                   }
-
                    if(tokenFrequency.containsKey(token)){
                        tokenFrequency.put(token,(tokenFrequency.get(token))+1);
                    }else{
@@ -69,7 +62,7 @@ public class LanguageModel {
 
                }
            }
-           else{//this means that the string is less than ngram size so we just add it
+           else{
                if(tokenFrequency.containsKey(word)){
                    tokenFrequency.put(word,(tokenFrequency.get(word)+1));
                }else{
@@ -80,12 +73,15 @@ public class LanguageModel {
 
     }
 
+    /**
+     * Method that calculates the entropy of the model
+     * @return the entropy
+     */
     public double calculateEntropy(){
        double entropy = 0.0;
         if(nGram==0){
             double prob = (double) 1/ (double) numLetters;
-            double logBase2 = Math.log(prob)/Math.log(2);
-            entropy =  numLetters *  prob * logBase2;
+            entropy = Math.log(prob)/Math.log(2);
         }else{
             long totalFrequency = tokenFrequency.values().stream().mapToLong(Long::longValue).sum();
             for(Map.Entry<String, Long> entry : tokenFrequency.entrySet()){
@@ -94,14 +90,21 @@ public class LanguageModel {
                 entropy += prob * logBase2;
             }
         }
-//        return  nGram== 0 ? -entropy: -entropy/nGram;
         return -entropy;
     }
 
+    /** Method that calculates the total number
+     * of tokens encountered in the model
+     * @return the total number of tokens
+     */
     public long getTotalNumberOfTokens(){
        return tokenFrequency.values().stream().mapToLong(Long::longValue).sum();
     }
 
+    /**
+     * Method that finds the five most frequent tokens that appear in the model
+     * @return a list that contains five most frequent tokens
+     */
     public List<String> get5FrequentTokens(){
         return tokenFrequency.entrySet()
                 .stream()
@@ -112,6 +115,11 @@ public class LanguageModel {
 
     }
 
+
+    /**
+     * Method that finds the five least frequent tokens that appear in the model
+     * @return a list that contains five least frequent tokens
+     */
     public List<String> get5LessFrequentTokens(){
         return tokenFrequency.entrySet()
                 .stream()
@@ -122,6 +130,12 @@ public class LanguageModel {
 
     }
 
+    /**
+     * Method that calculates the resemblance between the language model and another model based
+     * on cosine-similarity
+     * @param unknownLanguageTokens
+     * @return the cosine value, which corresponds to the resemblance between two models
+     */
     public double calculateResemblance(Map<String, Long> unknownLanguageTokens){
        HashMap<String, Long> componentProduct = new HashMap<>();
        componentProduct.putAll(unknownLanguageTokens);
@@ -140,10 +154,15 @@ public class LanguageModel {
         long sum2 = tokenFrequency.values().stream()
                 .reduce(0L, (a,b)->a+b*b);
 
-        return (double) (numerator/(Math.sqrt(sum1)*Math.sqrt(sum2)));
+        return  (numerator/(Math.sqrt(sum1)*Math.sqrt(sum2)));
 
     }
 
+    /**
+     * Method that is used to get the map that contains the tokens and their corresponding
+     * frequencies
+     * @return
+     */
     public Map<String, Long> getTokenFrequency(){
        return tokenFrequency;
     }

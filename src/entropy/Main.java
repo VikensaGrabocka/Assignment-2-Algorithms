@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 10/6/2025 . Author @Vikensa Grabocka
+ */
+
+
 package entropy;
 
 import java.io.BufferedReader;
@@ -19,7 +24,7 @@ public class Main {
         LanguageModel[] languageModels2 = new LanguageModel[numOfNGrams];
         for (int i = 0; i < languageModels.length; i++) {
             languageModels[i] = new LanguageModel(i, numAlbanianLetters);
-            languageModels2[i] = new LanguageModel(i, numAlbanianLetters);
+            languageModels2[i] = new LanguageModel(i, numAlbanianLetters);//this array contains the languageModel objects for the second category
         }
 
         for (int k = 0; k < textsInfo.length; k++) {
@@ -88,11 +93,19 @@ public class Main {
 
     }
 
+
+    /**
+     * Private method that is used to display the results
+     * for each model
+     * @param languageModels
+     * @param description
+     */
+
     private static void displayResults(LanguageModel[] languageModels, String description) {
         for (int i = 0; i < languageModels.length; i++) {
             System.out.println(description);
             System.out.println(i + " gram");
-            System.out.println("Entropy: " + languageModels[i].calculateEntropy());
+            System.out.println("Entropy: " +  languageModels[i].calculateEntropy());
             System.out.println("Total number of tokens: " + (i==0 ? "N/A" : languageModels[i].getTotalNumberOfTokens()));
             System.out.println("Five most frequent tokens: " + (i==0 ? "N/A" : languageModels[i].get5FrequentTokens()));
             System.out.println("Five least frequent tokens: " + ( i==0 ? "N/A" :languageModels[i].get5LessFrequentTokens()));
